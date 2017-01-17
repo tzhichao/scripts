@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 import core
 import file_utils
@@ -16,29 +17,27 @@ except NameError:
 
 def entry(isPublic, isSelectable, threadNum, sdkVersion):
     log_utils.info('Curr Python Version: %s', config_utils.get_py_version())
-    tip = u'\n\t ***********************************\u6240\u6709\u6e38\u620f***********************************'
+    tip = u'\n========================== 已添加的游戏 =================================\n'
     log_utils.info('Current YinHuSDK Version: %s', sdkVersion)
     print tip
-    chStrFormat = u'\t --appID-- \t\t --\u6e38\u620f\u6587\u4ef6\u5939-- \t\t ----\u6e38\u620f\u540d\u79f0---- \n\n'
+    print '------------------------------------------------------------------------'
+    chStrFormat = u'编号\t\tappID\t\t游戏文件夹\t\t游戏名称\n'
     print chStrFormat
     pent = 0
+    #获取所有配置的游戏
     games = config_utils.getAllGames()
     if games != None and len(games) > 0:
         for ch in games:
-            chStr = u'%s\t %s \t\t %s -------------------\t%s' % (pent,
-             ch['appID'],
-             ch['appName'],
-             ch['appDesc'])
+            chStr = u' %s\t\t%s\t\t%s\t\t%s\n' % (pent,
+                                                  ch['appID'],
+                                                  ch['appName'],
+                                                  ch['appDesc'])
             print chStr
-            if pent == 0:
-                print ''
-            elif pent % 10 == 0 and pent != 1:
-                print ''
             pent = pent + 1
 
-    tip = '\n\tSelect Game(appID): '
+    print '------------------------------------------------------------------------'
+    tip = '\nSelect Game(appID): '
     selectedGameID = input(tip)
-    selectedGameID = str('1087' + selectedGameID)
     log_utils.info('Current Selected Game ID is : %s ', selectedGameID)
     game = getGameByAppID(selectedGameID, games)
     gameDescs = game['appDesc']
