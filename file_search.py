@@ -1,5 +1,3 @@
-# 2017.01.16 18:53:44 中国标准时间
-#Embedded file name: F:\YinHuSDK\tools\U8SDKTool-Win-P34\scripts\file_search.py
 import sys
 import os
 import os.path
@@ -40,6 +38,3 @@ def printPats(level, path, picName):
         allFileNum = allFileNum + 1
 
     return fileNameV4
-
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:53:44 中国标准时间

@@ -1,25 +1,22 @@
-# 2017.01.16 18:56:25 ÖĞ¹ú±ê×¼Ê±¼ä
-#Embedded file name: pack.py
+# -*- coding: utf-8 -*-
 import games
-import main
-import main_thread
+# import main
+# import main_thread
 import sys
-import http_utils
+# import http_utils
 import argparse
-import stat
-import file_search
-import log_utils
+# import stat
+# import file_search
+# import log_utils
 if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding('gbk')
-    parser = argparse.ArgumentParser(u'Òøºü¼¼Êõ´ó´óµÄ³¬¼¶´ò°ü¹¤¾ß')
-    parser.add_argument('-r', '--release', help=u'±ê¼ÇÎªÕıÊ½°ü£¬·ÇÕıÊ½°ü»áÔÚ°üÃûºóÃæ¼ÓÉÏ.debug', action='store_true', dest='release', default=False)
-    parser.add_argument('-s', '--select', help=u'ÈÃÓÃ»§×Ô¼ºÑ¡ÔñĞèÒª´ò°üµÄÇşµÀ¡£·ñÔò½«»á´ò³öËùÓĞÇşµÀ°ü', action='store_true', dest='selectable', default=False)
-    parser.add_argument('-t', '--thread', help=u'È«²¿´ò°üÊ±µÄ´ò°üÏß³ÌÊıÁ¿', action='store', dest='threadNum', type=int, default=1)
-    parser.add_argument('-v', '--version', help=u'²é¿´µ±Ç°Ê¹ÓÃµÄYinHuSDK°æ±¾', version='V2.3', action='version', default='V2.3')
+    parser = argparse.ArgumentParser(u'é“¶ç‹æŠ€æœ¯å¤§å¤§çš„è¶…çº§æ‰“åŒ…å·¥å…·')
+    parser.add_argument('-r', '--release', help=u'æ ‡è®°ä¸ºæ­£å¼åŒ…ï¼Œéæ­£å¼åŒ…ä¼šåœ¨åŒ…ååé¢åŠ ä¸Š.debug', action='store_true', dest='release', default=False)
+    parser.add_argument('-s', '--select', help=u'è®©ç”¨æˆ·è‡ªå·±é€‰æ‹©éœ€è¦æ‰“åŒ…çš„æ¸ é“ã€‚å¦åˆ™å°†ä¼šæ‰“å‡ºæ‰€æœ‰æ¸ é“åŒ…', action='store_true', dest='selectable', default=False)
+    parser.add_argument('-t', '--thread', help=u'å…¨éƒ¨æ‰“åŒ…æ—¶çš„æ‰“åŒ…çº¿ç¨‹æ•°é‡', action='store', dest='threadNum', type=int, default=1)
+    parser.add_argument('-v', '--version', help=u'æŸ¥çœ‹å½“å‰ä½¿ç”¨çš„YinHuSDKç‰ˆæœ¬', version='V2.3', action='version', default='V2.3')
     args = parser.parse_args()
     print args
-    games.entry(args.release, args.selectable, args.threadNum, args.version)
+    # games.entry(args.release, args.selectable, args.threadNum, args.version)
 
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:56:25 ÖĞ¹ú±ê×¼Ê±¼ä

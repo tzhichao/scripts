@@ -1,5 +1,3 @@
-# 2017.01.16 18:52:46 中国标准时间
-#Embedded file name: F:\YinHuSDK\tools\U8SDKTool-Win-P34\scripts\config_utils.py
 import sys
 import os
 import os.path
@@ -445,6 +443,3 @@ def writePluginConfigs(channel, targetFilePath):
                     pluginNode.set('type', typeVal)
 
     targetTree.write(targetFilePath, 'UTF-8')
-
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:52:47 中国标准时间

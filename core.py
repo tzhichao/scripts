@@ -1,5 +1,3 @@
-# 2017.01.16 18:53:06 中国标准时间
-#Embedded file name: F:\YinHuSDK\tools\U8SDKTool-Win-P34\scripts\core.py
 import sys
 import file_utils
 import apk_utils
@@ -107,5 +105,3 @@ def pack(game, channel, sourcepath, isPublic):
     log_utils.info('-------------------------------------------\n')
     return 0
 
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:53:06 中国标准时间

@@ -1,5 +1,3 @@
-# 2017.01.16 18:56:47 中国标准时间
-#Embedded file name: F:\YinHuSDK\tools\U8SDKTool-Win-P34\scripts\times_main.py
 import sys
 import os
 import os.path
@@ -77,6 +75,3 @@ def getTimes(XMLPath):
 if __name__ == '__main__':
     te = getTimes('../')
     print te
-
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:56:47 中国标准时间

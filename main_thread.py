@@ -1,5 +1,3 @@
-# 2017.01.16 18:56:07 中国标准时间
-#Embedded file name: F:\YinHuSDK\tools\U8SDKTool-Win-P34\scripts\main_thread.py
 import sys
 import core
 import file_utils
@@ -75,6 +73,3 @@ class PackerThread(threading.Thread):
             self.queue.task_done()
 
         log_utils.info('Thread-%s:sucNum:%s;failNum:%s', self.threadIndex, str(self.sucNum), str(self.failNum))
-
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:56:07 中国标准时间

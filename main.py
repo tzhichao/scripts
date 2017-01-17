@@ -1,5 +1,3 @@
-# 2017.01.16 18:55:47 中国标准时间
-#Embedded file name: F:\YinHuSDK\tools\U8SDKTool-Win-P34\scripts\main.py
 import sys
 import core
 import file_utils
@@ -95,6 +93,3 @@ def packSelectedChannels(game, channels, selectedChannels, isPublic):
 
         log_utils.info('<< all nice done >>')
         log_utils.info('<< success num:%s; fail num:%s>>', sucNum, falNum)
-
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:55:47 中国标准时间

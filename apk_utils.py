@@ -1,5 +1,3 @@
-# 2017.01.16 18:52:03 中国标准时间
-#Embedded file name: F:\YinHuSDK\tools\U8SDKTool-Win-P34\scripts\apk_utils.py
 import file_utils
 import os
 import os.path
@@ -1433,6 +1431,3 @@ def isset(v):
         return 0
 
     return 1
-
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:52:04 中国标准时间

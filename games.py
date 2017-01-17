@@ -1,5 +1,3 @@
-# 2017.01.16 18:54:27 中国标准时间
-#Embedded file name: F:\YinHuSDK\tools\U8SDKTool-Win-P34\scripts\games.py
 import sys
 import core
 import file_utils
@@ -57,6 +55,3 @@ def getGameByAppID(appID, games):
     for game in games:
         if game['appID'] == appID:
             return game
-
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:54:27 中国标准时间

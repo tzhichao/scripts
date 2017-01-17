@@ -1,5 +1,3 @@
-# 2017.01.16 18:54:53 中国标准时间
-#Embedded file name: F:\YinHuSDK\tools\U8SDKTool-Win-P34\scripts\http_utils.py
 import config_utils
 if config_utils.is_py_env_2():
     import urllib2
@@ -29,5 +27,3 @@ def post(url, params):
     with urllib2.urlopen(request, data) as f:
         content = f.read()
     return content
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:54:53 中国标准时间

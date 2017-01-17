@@ -1,5 +1,3 @@
-# 2017.01.16 18:54:04 中国标准时间
-#Embedded file name: F:\YinHuSDK\tools\U8SDKTool-Win-P34\scripts\file_utils.py
 import os
 import os.path
 import re
@@ -214,6 +212,3 @@ def on_access_error(func, path, exc_info):
         func(path)
     else:
         raise
-
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:54:04 中国标准时间

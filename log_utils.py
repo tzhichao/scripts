@@ -1,5 +1,3 @@
-# 2017.01.16 18:55:29 中国标准时间
-#Embedded file name: F:\YinHuSDK\tools\U8SDKTool-Win-P34\scripts\log_utils.py
 import logging
 import os
 import platform
@@ -55,6 +53,3 @@ def error(msg, *args):
     if len(msg) <= 0:
         return
     logger.error(msg, *args)
-
-# decompiled 1 files: 1 okay, 0 failed, 0 verify failed
-# 2017.01.16 18:55:29 中国标准时间
