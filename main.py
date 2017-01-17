@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 import core
 import file_utils
@@ -14,43 +15,41 @@ except NameError:
     pass
 
 def main(game, isPublic, isFullRes = False):
-    tip = u'**********\u5f53\u524d\u914d\u7f6e\u7684\u6e20\u9053\u53f7**********'
+    tip = u'\n====================== 游戏已配置的渠道 ============================\n'
     print tip
-    chStrFormat = u'\t\u6e20\u9053\u53f7 \t\t \u6e20\u9053\u540d \n'
+    chStrFormat = u'\t\t渠道号 \t\t\t 渠道名 \n'
     print chStrFormat
     appName = game['appName']
     channels = config_utils.getAllChannels(appName, isPublic)
     if channels != None and len(channels) > 0:
         for ch in channels:
-            chStr = u'\t%s \t\t %s ' % (ch['id'], ch['name'])
+            chStr = u'\t\t%s \t\t\t %s \n' % (ch['id'], ch['name'])
             print chStr
 
-    tip = u'\nSelect channels(input channelID, comma split)\n\t \u8bf7\u8f93\u5165\u6e20\u9053\u53f7 (0\u4f4d\u5168\u90e8 \u591a\u6e20\u9053\u53ef\u4f7f\u7528 \uff0c\u9017\u53f7\u5206\u9694) :  '
+    tip = u'请输入要打包的渠道号(0：打包所有渠道， 多个渠道可使用","逗号分隔):  '
     inputChannels = input(tip)
     inputChannels = str(inputChannels)
     inputChannels = inputChannels.encode('utf-8')
     print u'\n'
-    print u'\t>>>>>>>>>>>>>>>>>> ROOT\u673a\u5668\u4eba \u5373\u5c06\u4e3a\u60a8\u6253\u5305  '
-    print u'\n'
     if inputChannels == '0':
-        print u'\t>>>>>>>>>>>>>>>>>> \u6240\u6709\u6e20\u9053\u6253\u5305'
+        print u'\t......打包所有已配置的渠道......\n'
         packAllChannels(game, channels, isPublic)
     else:
         lstChannels = inputChannels.replace('(', '').replace(')', '').replace(' ', '').split(',')
-        print u'\t>>>>>>>>>>>>>>>>>> \u5206\u53d1\u6e20\u9053\u6253\u5305\n'
+        print u'\t......打包指定的渠道.......\n'
         packSelectedChannels(game, channels, lstChannels, isPublic)
 
 
 def packAllChannels(game, channels, isPublic):
     basePath = file_utils.getCurrDir()
-    log_utils.info('Curr Work Dir::%s', basePath)
+    log_utils.info('Current Work Dir: %s', basePath)
     if channels != None and len(channels) > 0:
         clen = len(channels)
-        log_utils.info('Now Have %s channels to package', clen)
-        packagePath = file_utils.getFullPath('yinhu.apk')
-        log_utils.info('The base apk file is :%s', packagePath)
+        log_utils.info('Now Have %s channels to package...', clen)
+        packagePath = file_utils.getFullPath('rh.apk')
+        log_utils.info('The base apk file is: %s', packagePath)
         if not os.path.exists(packagePath):
-            log_utils.error("The apk file name must be 'yinhu.apk'")
+            log_utils.error("The apk file name must be 'rh.apk'")
             return
         sucNum = 0
         falNum = 0
@@ -70,14 +69,14 @@ def packSelectedChannels(game, channels, selectedChannels, isPublic):
         print 'the selected channels is none or empty'
         return
     basePath = file_utils.getCurrDir()
-    log_utils.info('Curr Work Dir::%s', basePath)
+    log_utils.info('Current Work Dir: %s', basePath)
     if channels != None and len(channels) > 0:
         clen = len(selectedChannels)
-        log_utils.info('Now Have %s channels to package ', clen)
-        packagePath = file_utils.getFullPath('yinhu.apk')
-        log_utils.info('The base apk file is : %s', packagePath)
+        log_utils.info('Now Have %s channels to package...', clen)
+        packagePath = file_utils.getFullPath('rh.apk')
+        log_utils.info('The base apk file is: %s', packagePath)
         if not os.path.exists(packagePath):
-            log_utils.error("The apk file name must be 'yinhu.apk'")
+            log_utils.error("The apk file name must be 'rh.apk'")
             return
         sucNum = 0
         falNum = 0
