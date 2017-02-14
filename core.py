@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import sys
 import file_utils
 import apk_utils
@@ -12,28 +13,34 @@ def pack(game, channel, sourcepath, isPublic):
     if not os.path.exists(sourcepath):
         return 1
     appID = game['appID']
-    appKey = game['appKey']
+    #暂不需要
+    # appKey = game['appKey']
     appName = game['appName']
     appDescri = game['appDesc']
     channelId = channel['id']
     channelName = channel['name']
     sdkName = channel['sdk']
-    log_utils.info('APPName: is %s ', appName)
-    if 'YHGameName' in channel:
-        channelMyName = channel['YHGameName']
+    if 'RHGameName' in channel:
+        channelMyName = channel['RHGameName']
         log_utils.info('channelName: %s ', channelName)
         log_utils.info('channelMyName: %s ', channelMyName)
-    log_utils.info('appID: %s ', appID)
+    log_utils.info('--------- pack info start ---------')
+    log_utils.info('appName is:  %s ', appName)
+    log_utils.info('appId: %s ', appID)
     log_utils.info('appName: %s ', appName)
     log_utils.info('appDescript: %s ', appDescri)
+    log_utils.info('channelId: %s ', channelId)
     log_utils.info('channelName: %s ', channelName)
-    log_utils.info('APPName: %s ', '-------------------------')
+    log_utils.info('sdkName: %s ', sdkName)
+    log_utils.info('--------- pack info end ---------')
     workDir = 'workspace/' + appName + '/' + sdkName
     workDir = file_utils.getFullPath(workDir)
     file_utils.del_file_folder(workDir)
     tempApkSource = workDir + '/temp.apk'
+    #复制源包
     file_utils.copy_file(sourcepath, tempApkSource)
     decompileDir = workDir + '/decompile'
+    #反编译
     ret = apk_utils.decompileApk(tempApkSource, decompileDir)
     if ret:
         return 1
@@ -60,12 +67,13 @@ def pack(game, channel, sourcepath, isPublic):
     apk_utils.copyAppResources(game, decompileDir)
     apk_utils.copyAppRootResources(game, decompileDir)
     apk_utils.appendChannelIconMark(game, channel, decompileDir)
-    apk_utils.writeDevelopInfo(appID, appKey, channel, decompileDir)
+    apk_utils.writeDevelopInfo(appID, channel, decompileDir)
     apk_utils.writePluginInfo(channel, decompileDir)
     apk_utils.writeManifestMetaInfo(channel, decompileDir)
     apk_utils.modifyGameName(channel, decompileDir)
     apk_utils.editActivityName(channel, decompileDir)
-    apk_utils.editMainActivity(decompileDir)
+    #没看出来有什么作用
+    # apk_utils.editMainActivity(decompileDir)
     ret = apk_utils.doSDKScript(channel, decompileDir, newPackageName, sdkDestDir)
     if ret:
         return 1
@@ -78,6 +86,9 @@ def pack(game, channel, sourcepath, isPublic):
     ret = apk_utils.generateNewRFile(newPackageName, decompileDir)
     if ret:
         return 1
+    #拆分dex
+    apk_utils.splitDex(workDir, decompileDir)
+
     targetApk = workDir + '/output.apk'
     XMLPath = ''
     ret = apk_utils.recompileApk(XMLPath, decompileDir, targetApk)

@@ -17,7 +17,7 @@ def getCurrDir():
 
 logger = logging.getLogger('')
 logger.setLevel(logging.DEBUG)
-log_file = getCurrDir() + '/log/yinhusdk.log'
+log_file = getCurrDir() + '/log/pack.log'
 log_dir = os.path.dirname(log_file)
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)

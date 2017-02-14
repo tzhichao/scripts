@@ -16,7 +16,7 @@ except NameError:
     pass
 
 def entry(isPublic, isSelectable, threadNum, sdkVersion):
-    log_utils.info('Curr Python Version: %s', config_utils.get_py_version())
+    log_utils.info('Current Python Version: %s', config_utils.get_py_version())
     tip = u'\n========================== 已添加的游戏 =================================\n'
     log_utils.info('Current RHSDK Version: %s', sdkVersion)
     print tip

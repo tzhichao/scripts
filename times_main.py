@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import sys
 import os
 import os.path
@@ -23,7 +24,7 @@ class CountryHandler(xml.sax.ContentHandler):
         if tag == 'command':
             print '*****Command*****'
             name = attributes['name']
-            print u'\u5bc6\u7801:', name
+            print u'密码:', name
         elif tag == 'neighbor':
             name = attributes['name']
             direction = attributes['direction']
@@ -33,15 +34,15 @@ class CountryHandler(xml.sax.ContentHandler):
 
     def endElement(self, tag):
         if self.CurrentData == 'times':
-            print u'\u7b49\u5f85\u65f6\u95f4:', self.times
+            print u'等待时间:', self.times
         elif self.CurrentData == 'year':
-            print u'\u5e74\u4efd:', self.year
+            print u'年份:', self.year
         elif self.CurrentData == 'neighbor':
-            print u'\u90bb\u5c45:', self.neighbor
+            print u'邻居:', self.neighbor
         elif self.CurrentData == 'company':
-            print u'\u516c\u53f8:', self.company
+            print u'公司:', self.company
         elif self.CurrentData == 'versionCode':
-            print u'\u5f53\u524d\u4f7f\u7528\u7248\u672c:', self.versionCode
+            print u'当前使用版本:', self.versionCode
         self.CurrentData = ''
         return '1'
 

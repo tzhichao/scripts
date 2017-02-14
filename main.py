@@ -65,6 +65,14 @@ def packAllChannels(game, channels, isPublic):
 
 
 def packSelectedChannels(game, channels, selectedChannels, isPublic):
+    '''
+     将游戏打包指定的渠道
+    :param game: 游戏信息
+    :param channels: 所有配置的渠道
+    :param selectedChannels:  选择的渠道
+    :param isPublic: 是否正式包
+    :return: 无
+    '''
     if selectedChannels == None or len(selectedChannels) <= 0:
         print 'the selected channels is none or empty'
         return

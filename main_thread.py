@@ -25,10 +25,10 @@ def packAllChannels(game, isPublic, threadNum):
     if channels != None and len(channels) > 0:
         clen = len(channels)
         log_utils.info('------>Now Have %s channels to package ', clen)
-        packagePath = file_utils.getFullPath('yinhu.apk')
+        packagePath = file_utils.getFullPath('rh.apk')
         log_utils.info('The base apk file is : %s', packagePath)
         if not os.path.exists(packagePath):
-            log_utils.error("The apk file name must be 'yinhu.apk'")
+            log_utils.error("The apk file name must be 'rh.apk'")
             return
         que = queue.Queue()
         for channel in channels:

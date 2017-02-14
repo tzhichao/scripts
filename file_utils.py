@@ -164,7 +164,7 @@ def getFullOutputOpensPath(appName, channel, appDescript):
     return path
 
 
-def execFormatCmd(cmd):
+def execFormatCmd(cmd, operation=''):
     cmd = cmd.replace('\\', '/')
     cmd = re.sub('/+', '/', cmd)
     ret = 0
@@ -173,25 +173,27 @@ def execFormatCmd(cmd):
         st.dwFlags = subprocess.STARTF_USESHOWWINDOW
         st.wShowWindow = subprocess.SW_HIDE
         cmd = str(cmd).encode('gbk')
-        log_utils.info('=>>>%s********', len(cmd))
-        log_utils.error('=>>>%s********', cmd)
+        log_utils.info('\n===================exec %s cmd start===================', operation)
+        log_utils.info('CMD_content: %s', cmd)
+        log_utils.info('CMD_length: %s', len(cmd))
     s = subprocess.Popen(cmd, shell=True)
     ret = s.wait()
     if ret:
         s = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdoutput, erroutput = s.communicate()
-        log_utils.error('*******ERROR*******')
+        cmd = 'Error: [' + cmd + '  ------> exec Fail!!!  ]'
+        log_utils.error('*******ERROR INFO START*******')
         log_utils.error(stdoutput)
         log_utils.error(erroutput)
-        log_utils.error('*******************')
-        cmd = 'error::' + cmd + '  !!!exec Fail!!!  '
+        log_utils.error('*******ERROR INFO END**********\n')
     else:
         s = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdoutput, erroutput = s.communicate()
         log_utils.info(stdoutput)
         log_utils.info(erroutput)
-        cmd += ' !!!exec success!!! '
+        cmd = 'Success: [' + cmd + '  ------> exec Success!!!  ]'
     log_utils.info(cmd)
+    log_utils.info('===================exec %s cmd end===================\n', operation)
     return ret
 
 

@@ -1,7 +1,9 @@
+# -*- coding:utf-8 -*-
 import file_utils
 import os
 import os.path
 import config_utils
+import smali_utils
 import file_search
 from xml.etree import ElementTree as ET
 from xml.etree.ElementTree import SubElement
@@ -24,13 +26,13 @@ import image_utils
 androidNS = 'http://schemas.android.com/apk/res/android'
 
 def modifyGameName(channel, decompileDir):
-    """
-        \xe4\xbf\xae\xe6\x94\xb9\xe5\xbd\x93\xe5\x89\x8d\xe6\xb8\xa0\xe9\x81\x93\xe7\x9a\x84\xe6\xb8\xb8\xe6\x88\x8f\xe5\x90\x8d\xe7\xa7\xb0,\xe5\xa6\x82\xe6\x9e\x9c\xe6\x9f\x90\xe4\xb8\xaa\xe6\xb8\xa0\xe9\x81\x93\xe7\x9a\x84\xe6\xb8\xb8\xe6\x88\x8f\xe5\x90\x8d\xe7\xa7\xb0\xe7\x89\xb9\xe6\xae\x8a\xef\xbc\x8c\xe5\x8f\xaf\xe4\xbb\xa5\xe9\x85\x8d\xe7\xbd\xaegameName\xe6\x9d\xa5\xe6\x8c\x87\xe5\xae\x9a\xe3\x80\x82\xe9\xbb\x98\xe8\xae\xa4\xe5\xb0\xb1\xe6\x98\xaf\xe6\xaf\x8d\xe5\x8c\x85\xe4\xb8\xad\xe6\xb8\xb8\xe6\x88\x8f\xe7\x9a\x84\xe5\x90\x8d\xe7\xa7\xb0
-    """
+
     log_utils.info('\n\t')
     log_utils.info('============modifyGameName============')
-    if 'YHGameName' not in channel:
-        print '============modifyGameName=========== no YHGameName '
+    if 'RHGameName' not in channel:
+        return
+    gameName = channel['RHGameName']
+    if gameName == None or len(gameName) == 0:
         return
     manifestFile = decompileDir + '/AndroidManifest.xml'
     manifestFile = file_utils.getFullPath(manifestFile)
@@ -39,9 +41,9 @@ def modifyGameName(channel, decompileDir):
     root = tree.getroot()
     labelKey = '{' + androidNS + '}label'
     applicationNode = root.find('application')
-    applicationNode.set(labelKey, channel['YHGameName'])
-    log_utils.info('modifyGameName : YHGameName is %s', channel['YHGameName'])
-    log_utils.info('============modifyGameName============')
+    applicationNode.set(labelKey, gameName)
+    log_utils.info('modifyGameName : RHGameName is %s', gameName)
+    log_utils.info('============modifyGameName Success============')
     log_utils.info('\n\t')
     tree.write(manifestFile, 'UTF-8')
 
@@ -49,8 +51,10 @@ def modifyGameName(channel, decompileDir):
 def editActivityName(channel, decompileDir):
     log_utils.info('\n\t')
     log_utils.info('============editActivityName============')
-    if 'YHGameName' not in channel:
-        print '============editActivityName=========== no YHGameName '
+    if 'RHGameName' not in channel:
+        return
+    gameName = channel['RHGameName']
+    if gameName == None or len(gameName) == 0:
         return
     manifestFile = decompileDir + '/AndroidManifest.xml'
     manifestFile = file_utils.getFullPath(manifestFile)
@@ -96,13 +100,13 @@ def editActivityName(channel, decompileDir):
 
         if bMain:
             activityName = activityNode.attrib[key]
-            activityNode.set(labelKey, channel['YHGameName'])
+            activityNode.set(labelKey, gameName)
             break
 
     tree.write(manifestFile, 'UTF-8')
-    log_utils.info('modifyGameName : YHGameName is %s', channel['YHGameName'])
+    log_utils.info('modifyGameName : RHGameName is %s', gameName)
     log_utils.info('modifyGameName : activityName is %s', activityName)
-    log_utils.info('============modifyGameName============')
+    log_utils.info('============modifyActivityGameName Success============')
     log_utils.info('\n\t')
 
 
@@ -274,7 +278,7 @@ def jar2dex(srcDir, dstDir, dextool = 'baksmali.jar'):
         if f.endswith('.jar'):
             cmd = cmd + ' ' + os.path.join(srcDir, 'libs', f)
 
-    ret = file_utils.execFormatCmd(cmd)
+    ret = file_utils.execFormatCmd(cmd, 'jar2dex')
 
 
 def dex2smali(dexFile, targetdir, dextool = 'baksmali.jar'):
@@ -293,7 +297,7 @@ def dex2smali(dexFile, targetdir, dextool = 'baksmali.jar'):
      smaliTool,
      targetdir,
      dexFile)
-    ret = file_utils.execFormatCmd(cmd)
+    ret = file_utils.execFormatCmd(cmd, 'dex2smali')
     return ret
 
 
@@ -314,7 +318,7 @@ def decompileApk(source, targetdir, apktool = 'apktool2.jar'):
          apktool,
          apkfile,
          targetdir)
-        ret = file_utils.execFormatCmd(cmd)
+        ret = file_utils.execFormatCmd(cmd, 'decompileApk')
         if ret == 1:
             apktool = 'apktool.jar'
             apktool = file_utils.getFullToolPath(apktool)
@@ -322,7 +326,7 @@ def decompileApk(source, targetdir, apktool = 'apktool2.jar'):
              apktool,
              apkfile,
              targetdir)
-            ret = file_utils.execFormatCmd(cmd)
+            ret = file_utils.execFormatCmd(cmd, 'decompileApk')
     except BaseException as e:
         apktool = 'apktool.jar'
         apktool = file_utils.getFullToolPath(apktool)
@@ -330,8 +334,8 @@ def decompileApk(source, targetdir, apktool = 'apktool2.jar'):
          apktool,
          apkfile,
          targetdir)
-        ret = file_utils.execFormatCmd(cmd)
-        log_utils.error('Exception:%s', e)
+        ret = file_utils.execFormatCmd(cmd, 'decompileApk')
+        log_utils.error('DecompileApk Exception: %s', e)
         raise e
     finally:
         log_utils.warning('********************')
@@ -366,7 +370,7 @@ def recompileApk(XMLPath, sourcefolder, apkfile, apktool = 'apktool2.jar'):
              apktool,
              sourcefolder,
              apkfile)
-            ret = file_utils.execFormatCmd(cmd)
+            ret = file_utils.execFormatCmd(cmd, 'recompileApk')
             if ret == 1:
                 apktool = 'apktool.jar'
                 apktool = file_utils.getFullToolPath(apktool)
@@ -374,7 +378,7 @@ def recompileApk(XMLPath, sourcefolder, apkfile, apktool = 'apktool2.jar'):
                  apktool,
                  sourcefolder,
                  apkfile)
-                ret = file_utils.execFormatCmd(cmd)
+                ret = file_utils.execFormatCmd(cmd, 'recompileApk')
         except Exception as e:
             apktool = 'apktool.jar'
             apktool = file_utils.getFullToolPath(apktool)
@@ -382,8 +386,8 @@ def recompileApk(XMLPath, sourcefolder, apkfile, apktool = 'apktool2.jar'):
              apktool,
              sourcefolder,
              apkfile)
-            ret = file_utils.execFormatCmd(cmd)
-            log_utils.error('Exception:%s', e)
+            ret = file_utils.execFormatCmd(cmd, 'recompileApk')
+            log_utils.error('RecompileApk Exception: %s', e)
             raise e
 
     return ret
@@ -409,7 +413,7 @@ def signApkInternal(apkfile, keystore, password, alias, aliaspwd):
     for filename in output.split('\n'):
         if filename.find('META_INF') == 0:
             rmcmd = '"%s" remove "%s" "%s"' % (aapt, apkfile, filename)
-            file_utils.execFormatCmd(rmcmd)
+            file_utils.execFormatCmd(rmcmd, 'aaptRemoveMetaInfo')
 
     signcmd = '"%sjarsigner" -keystore "%s" -storepass "%s" -keypass "%s" "%s" "%s" -sigalg SHA1withRSA -digestalg SHA1' % (file_utils.getJavaBinDir(),
      keystore,
@@ -417,7 +421,7 @@ def signApkInternal(apkfile, keystore, password, alias, aliaspwd):
      aliaspwd,
      apkfile,
      alias)
-    ret = file_utils.execFormatCmd(signcmd)
+    ret = file_utils.execFormatCmd(signcmd, 'signApk')
     return ret
 
 
@@ -451,7 +455,7 @@ def copyRootResFiles(apkfile, decompileDir):
     addCmd = addCmd % (aapt, apkfile)
     currPath = os.getcwd()
     os.chdir(decompileDir)
-    file_utils.execFormatCmd(addCmd)
+    file_utils.execFormatCmd(addCmd, 'aaptAddFile')
     os.chdir(currPath)
 
 
@@ -461,7 +465,7 @@ def alignApk(apkfile, targetapkfile):
     """
     align = file_utils.getFullToolPath('zipalign')
     aligncmd = '"%s" -f 4 "%s" "%s"' % (align, apkfile, targetapkfile)
-    ret = file_utils.execFormatCmd(aligncmd)
+    ret = file_utils.execFormatCmd(aligncmd, 'alignApk')
     return ret
 
 
@@ -493,6 +497,7 @@ def renamePackageName(channel, decompileDir, newPackageName, isPublic = True):
     if not isPublic:
         newPackageName = oldPackageName + '.debug'
     if tempPackageName != None and len(tempPackageName) > 0:
+        #判断填写的包名是否以‘.‘开头, 是的话新包名为在老包名后直接加上输入的包名，否则新包名为配置中填写的
         if tempPackageName[0:1] == '.':
             if not isPublic:
                 newPackageName = oldPackageName + '.debug' + tempPackageName
@@ -502,7 +507,7 @@ def renamePackageName(channel, decompileDir, newPackageName, isPublic = True):
             newPackageName = tempPackageName
     if newPackageName == None or len(newPackageName) <= 0:
         newPackageName = oldPackageName
-    log_utils.info('renamePackageName ------------the new package name is %s', newPackageName)
+    log_utils.info('renamePackageName >>> the new package name is： %s', newPackageName)
     appNode = root.find('application')
     if appNode != None:
         activityLst = appNode.findall('activity')
@@ -564,12 +569,16 @@ def copyResource(game, channel, packageName, sdkDir, decompileDir, operations, n
         for child in operations:
             if child['type'] == 'mergeManifest':
                 manifestFrom = file_utils.getFullPath(os.path.join(sdkDir, child['from']))
+                #SDKManifest.xml
                 manifestFromTemp = manifestFrom
+                #AndoidManifest.xml
                 manifestTo = file_utils.getFullPath(os.path.join(decompileDir, child['to']))
                 if 'orientation' in game:
                     if game['orientation'] == 'portrait':
+                        #SDKManifest_portrait.xml
                         manifestFrom = manifestFrom[:-4] + '_portrait.xml'
                     else:
+                        #SDKManifest_landscape.xml
                         manifestFrom = manifestFrom[:-4] + '_landscape.xml'
                     if not os.path.exists(manifestFrom):
                         manifestFrom = manifestFromTemp
@@ -582,7 +591,7 @@ def copyResource(game, channel, packageName, sdkDir, decompileDir, operations, n
                     return 1
             elif child['type'] == 'copyRes':
                 if child['from'] == None or child['to'] == None:
-                    log_utils.error("the sdk config file error. 'copyRes' need 'from' and 'to'.sdk name:%s", name)
+                    log_utils.error("the sdk config file error. 'copyRes' need 'from' and 'to'.sdk name: %s", name)
                     return 1
                 copyFrom = file_utils.getFullPath(os.path.join(sdkDir, child['from']))
                 copyTo = file_utils.getFullPath(os.path.join(decompileDir, child['to']))
@@ -655,7 +664,7 @@ def mergeManifest(targetManifest, sdkManifest):
         Merge sdk SdkManifest.xml to the apk AndroidManifest.xml
     """
     if not os.path.exists(targetManifest) or not os.path.exists(sdkManifest):
-        log_utils.error('the manifest file is not exists.targetManifest:%s;sdkManifest:%s', targetManifest, sdkManifest)
+        log_utils.error('The manifest file is not exists.targetManifest: %s; sdkManifest: %s', targetManifest, sdkManifest)
         return False
     ET.register_namespace('android', androidNS)
     targetTree = ET.parse(targetManifest)
@@ -684,7 +693,7 @@ def mergeManifest(targetManifest, sdkManifest):
             metaNode = SubElement(appNode, 'meta-data')
             key = '{' + androidNS + '}name'
             val = '{' + androidNS + '}value'
-            metaNode.set(key, 'YH_APPLICATION_PROXY_NAME')
+            metaNode.set(key, 'RH_APPLICATION_PROXY_NAME')
             metaNode.set(val, proxyApplicationName)
         appKeyWord = appConfigNode.get('keyword')
         for child in list(appConfigNode):
@@ -808,22 +817,22 @@ def addSplashScreen(workDir, channel, decompileDir):
     smaliPath = splashPath + '/smali'
     smaliTargetPath = decompileDir + '/smali'
     copyResToApk(smaliPath, smaliTargetPath)
-    splashLayoutPath = splashPath + '/yinhu_splash.xml'
-    splashTargetPath = decompileDir + '/res/layout/yinhu_splash.xml'
+    splashLayoutPath = splashPath + '/rh_splash.xml'
+    splashTargetPath = decompileDir + '/res/layout/rh_splash.xml'
     file_utils.copy_file(splashLayoutPath, splashTargetPath)
     resPath = workDir + '/sdk/' + channel['sdk'] + '/splash/' + channel['splash']
     resTargetPath = decompileDir + '/res'
     copyResToApk(resPath, resTargetPath)
     activityName = removeStartActivity(decompileDir)
     appendSplashActivity(decompileDir, channel['splash'])
-    splashActivityPath = smaliTargetPath + '/com/yinhu/sdk/SplashActivity.smali'
+    splashActivityPath = smaliTargetPath + '/com/paojiao/rhsdk/SplashActivity.smali'
     f = open(splashActivityPath, 'r+')
     content = str(f.read())
     f.close()
-    replaceTxt = '{YinHuSDK_Game_Activity}'
+    replaceTxt = '{RHSDK_Game_Activity}'
     idx = content.find(replaceTxt)
     if idx == -1:
-        log_utils.error('modify splash file failed.the {YinHuSDK_Game_Activity} not found in SplashActivity.smali')
+        log_utils.error('modify splash file failed.the {RHSDK_Game_Activity} not found in SplashActivity.smali')
         return 1
     content = content[:idx] + activityName + content[idx + len(replaceTxt):]
     f2 = open(splashActivityPath, 'w')
@@ -898,7 +907,7 @@ def appendSplashActivity(decompileDir, splashType):
     if applicationNode is None:
         return
     splashNode = SubElement(applicationNode, 'activity')
-    splashNode.set(key, 'com.yinhu.sdk.SplashActivity')
+    splashNode.set(key, 'com.paojiao.rhsdk.SplashActivity')
     splashNode.set(theme, '@android:style/Theme.Black.NoTitleBar.Fullscreen')
     if splashType[:1] == '1':
         splashNode.set(screenkey, 'landscape')
@@ -984,14 +993,14 @@ def generateNewRFile(newPackageName, decompileDir):
      targetResPath,
      androidPath,
      manifestPath)
-    ret = file_utils.execFormatCmd(cmd)
+    ret = file_utils.execFormatCmd(cmd, 'generateNewRFile')
     if ret:
         return 1
     rPath = newPackageName.replace('.', '/')
     rPath = os.path.join(genPath, rPath)
     rPath = os.path.join(rPath, 'R.java')
     cmd = '"%sjavac" -source 1.7 -target 1.7 -encoding UTF-8 "%s"' % (file_utils.getJavaBinDir(), rPath)
-    ret = file_utils.execFormatCmd(cmd)
+    ret = file_utils.execFormatCmd(cmd, 'compileRFile')
     if ret:
         return 1
     targetDexPath = os.path.join(tempPath, 'classes.dex')
@@ -1001,7 +1010,7 @@ def generateNewRFile(newPackageName, decompileDir):
     else:
         dexToolPath = file_utils.getFullToolPath('/lib/dx.jar')
         cmd = file_utils.getJavaCMD() + ' -jar -Xmx512m -Xms512m "%s" --dex --output="%s" "%s"' % (dexToolPath, targetDexPath, genPath)
-    ret = file_utils.execFormatCmd(cmd)
+    ret = file_utils.execFormatCmd(cmd, 'jar2dex')
     if ret:
         return 1
     smaliPath = os.path.join(decompileDir, 'smali')
@@ -1009,12 +1018,12 @@ def generateNewRFile(newPackageName, decompileDir):
     return ret
 
 
-def writeDevelopInfo(appID, appKey, channel, decompileDir):
+def writeDevelopInfo(appID, channel, decompileDir):
     developConfigFile = os.path.join(decompileDir, 'assets')
     if not os.path.exists(developConfigFile):
         os.makedirs(developConfigFile)
     developConfigFile = os.path.join(developConfigFile, 'developer_config.properties')
-    config_utils.writeDeveloperProperties(appID, appKey, channel, developConfigFile)
+    config_utils.writeDeveloperProperties(appID, channel, developConfigFile)
 
 
 def writePluginInfo(channel, decompileDir):
@@ -1116,7 +1125,6 @@ def doGamePostScript(game, channel, decompileDir, packageName):
     sys.path.remove(scriptDir)
     return ret
 
-
 def checkValueResources(decompileDir):
     valXmls = ['strings.xml',
      'styles.xml',
@@ -1200,7 +1208,6 @@ def checkValueResources(decompileDir):
 
     for valFile in valueFiles.keys():
         valueFiles[valFile].write(valFile, 'UTF-8')
-
     return 0
 
 
@@ -1222,7 +1229,6 @@ def getAppIconName(decompileDir):
     if iconName is None:
         name = 'ic_launcher'
         return name
-    name = 'yinhu_icon'
     name = iconName[10:]
     log_utils.warning('--------------------------------------->AndroidManifest key name: %s', name)
     return name
@@ -1230,33 +1236,34 @@ def getAppIconName(decompileDir):
 
 def appendChannelIconMark(game, channel, decompileDir):
     """
-        \xe8\x87\xaa\xe5\x8a\xa8\xe7\xbb\x99\xe6\xb8\xb8\xe6\x88\x8f\xe5\x9b\xbe\xe6\xa0\x87\xe5\x8a\xa0\xe4\xb8\x8a\xe6\xb8\xa0\xe9\x81\x93SDK\xe7\x9a\x84\xe8\xa7\x92\xe6\xa0\x87
-        \xe6\xb2\xa1\xe6\x9c\x89\xe8\xa7\x92\xe6\xa0\x87\xef\xbc\x8c\xe7\x94\x9f\xe6\x88\x90\xe6\xb2\xa1\xe6\x9c\x89\xe8\xa7\x92\xe6\xa0\x87\xe7\x9a\x84ICON
+
     """
-    log_utils.warning('GameIconPath game is : %s \n\t', game)
-    gamePJName = 'pj_icon.png'
-    gameYHName = 'yhgame_icon.png'
+    log_utils.warning('appendChannelIconMark： the game is: %s', game)
     gameName = 'icon.png'
+    #config/games/rhsdk/icon/icon.png
     gameIconPath = 'config/games/' + game['appName'] + '/icon/' + gameName
     gameIconSpecialName = 'icon_special.png'
     gameIconSpecialPath = 'config/games/' + game['appName'] + '/icon/' + gameIconSpecialName
     gameIconPath = file_utils.getFullPath(gameIconPath)
     gameIconSpecialPath = file_utils.getFullPath(gameIconSpecialPath)
-    log_utils.warning('GameIconPath path is : %s', gameIconPath)
-    log_utils.warning('GameIconPath Special path is : %s', gameIconSpecialPath)
+    log_utils.warning('appendChannelIconMark：icon path is : %s', gameIconPath)
+    log_utils.warning('appendChannelIconMark: Special_Icon path is : %s', gameIconSpecialPath)
+    #游戏配置目录icon文件夹内是没有名为icon_special.png的图片。
     if not os.path.exists(gameIconSpecialPath):
-        log_utils.warning('GameIconPath Special path is not exists--> NOT')
+        log_utils.warning('appendChannelIconMark: Special_Icon path is not exists!!!')
         if not os.path.exists(gameIconPath):
-            log_utils.error('GameIconPath the game %s icon is not exists:%s', game['appName'], gameIconPath)
+            log_utils.error('appendChannelIconMark:  the game %s icon is not exists: %s', game['appName'], gameIconPath)
+            #icon下未配置任何图片，直接退出此方法。
             return 1
+        #icon是否需要添加角标
         useMark = True
-        log_utils.warning('GameIconPath useMark is True')
+        #在游戏渠道配置文件内是否设置了节点icon,不设置则不添加角标。
         if 'icon' not in channel:
-            log_utils.warning('GameIconPath the channel %s of game %s do not config icon in config.xml,no icon mark.', channel['name'], game['appName'])
+            log_utils.warning('appendChannelIconMark： the channel %s of game %s do not config icon in config.xml,no icon mark.', channel['name'], game['appName'])
             useMark = False
-        log_utils.warning('GameIconPath is: %s', gameIconPath)
-        log_utils.warning('GameIconPath is true or false : %s', useMark)
+        log_utils.warning('appendChannelIconMark： is true or false : %s', useMark)
         rlImg = Image.open(gameIconPath)
+        #获取角标图片路径
         if useMark:
             markType = channel['icon']
             markName = 'right-bottom'
@@ -1269,7 +1276,6 @@ def appendChannelIconMark(game, channel, decompileDir):
             elif markType == 'lb':
                 markName = 'left-bottom'
             markPath = 'config/sdk/' + channel['sdk'] + '/icon_marks/' + markName + '.png'
-            channelSDK = 'dujinyang'
             try:
                 print 'CHANNELSDK ICON_MARKS NOT EXISTS'
             except Exception as e:
@@ -1325,18 +1331,17 @@ def appendChannelIconMark(game, channel, decompileDir):
         xhdpiIcon.save(os.path.join(xhdpiPath, gameIconName), 'PNG')
         xxhdpiIcon.save(os.path.join(xxhdpiPath, gameIconName), 'PNG')
         xxxhdpiIcon.save(os.path.join(xxxhdpiPath, gameIconName), 'PNG')
+    #游戏配置目录icon文件夹内是有名为icon_special.png的图片，使用该图片作为应用icon。
     else:
-        log_utils.warning('GameIconPath Special path is exists --> YES')
+        log_utils.warning('appendChannelIconMark： Special_Icon path is exists!!! ')
         if not os.path.exists(gameIconSpecialPath):
-            log_utils.error('GameIconPath Special the game %s icon is not exists:%s', game['appName'], gameIconSpecialPath)
+            log_utils.error('appendChannelIconMark: Special the game %s icon is not exists:%s', game['appName'], gameIconSpecialPath)
             return 1
         useMark = True
-        log_utils.warning('GameIconPath Special useMark is True')
         if 'icon' not in channel:
             log_utils.warning('GameIconPath Special the channel %s of game %s do not config icon in config.xml,no icon mark.', channel['name'], game['appName'])
             useMark = False
-        log_utils.warning('GameIconPath Special is: %s', gameIconSpecialPath)
-        log_utils.warning('GameIconPath Special is true or false : %s', useMark)
+        log_utils.warning('appendChannelIconMark: Special useMark is True')
         rlImg = Image.open(gameIconSpecialPath)
         if useMark:
             markType = channel['icon']
@@ -1350,13 +1355,14 @@ def appendChannelIconMark(game, channel, decompileDir):
             elif markType == 'lb':
                 markName = 'left-bottom'
             markPath = 'config/sdk/' + channel['sdk'] + '/icon_marks/' + markName + '.png'
-            log_utils.warning('GameIconPath Special MarkPath is :  \n\t \t\t%s ', markPath)
+            log_utils.warning('appendChannelIconMark: Special MarkPath is :%s ', markPath)
             if not os.path.exists(markPath):
-                log_utils.warning('IconMarks Special Sorry -->>>>>Game IconMarks \n\t -- %s -- \n\t is not exists of sdk [ %s ]. No icon mark.', markPath, channel['sdk'])
+                log_utils.warning('appendChannelIconMark: Game IconMarks  -- %s -- is not exists of sdk [ %s ]. No icon mark.', markPath, channel['sdk'])
             else:
                 markIcon = Image.open(markPath)
-                log_utils.warning('OK \t\t----GameIconPath Special IconMarks is exit ----')
+                log_utils.warning('appendChannelIconMark: Special IconMarks is exit!!!')
                 rlImg = image_utils.appendIconMark(rlImg, markIcon, (0, 0))
+        #生成各种尺寸的app icon
         ldpiSize = (36, 36)
         mdpiSize = (48, 48)
         hdpiSize = (72, 72)
@@ -1400,7 +1406,7 @@ def appendChannelIconMark(game, channel, decompileDir):
         if not os.path.exists(xxxhdpiPath):
             os.makedirs(xxxhdpiPath)
         iconPicNames = getAppIconName(decompileDir)
-        log_utils.info('--AndroidManifest key name is: %s', iconPicNames)
+        #删除以下文件夹内指定名称的文件，以下操作是删除名字与application节点下icon指定值得图片 如：ic_launcher.png
         if os.path.exists(ldpiPathV4):
             file_search.printPats(1, ldpiPathV4, iconPicNames)
         if os.path.exists(mdpiPathV4):
@@ -1414,7 +1420,8 @@ def appendChannelIconMark(game, channel, decompileDir):
         if os.path.exists(xxxhdpiPathV4):
             file_search.printPats(1, xxxhdpiPathV4, iconPicNames)
         gameIconName = getAppIconName(decompileDir) + '.png'
-        log_utils.warning('GameIconPath Special gameIconName: %s', gameIconName)
+        log_utils.warning('appendChannelIconMark： Special gameIconName: %s', gameIconName)
+        #在以下每个文件夹内添加处理好的应用图标
         ldpiIcon.save(os.path.join(ldpiPath, gameIconName), 'PNG')
         mdpiIcon.save(os.path.join(mdpiPath, gameIconName), 'PNG')
         hdpiIcon.save(os.path.join(hdpiPath, gameIconName), 'PNG')
@@ -1422,6 +1429,92 @@ def appendChannelIconMark(game, channel, decompileDir):
         xxhdpiIcon.save(os.path.join(xxhdpiPath, gameIconName), 'PNG')
         xxxhdpiIcon.save(os.path.join(xxxhdpiPath, gameIconName), 'PNG')
     return 0
+
+
+def splitDex(workDir, decompileDir):
+    """
+        如果函数上限超过限制，自动拆分smali，以便生成多个dex文件
+    """
+    #根据配置设置使用dex拆分
+    local_config = config_utils.getLocalConfig()
+    if 'split_dex' not in local_config :
+        log_utils.info("The split_dex is not exists in local.properties. don't use split_dex.")
+        return
+    if not local_config['split_dex'] == '0':
+        log_utils.info("The split_dex value is not '0', don't use split_dex.")
+        return
+
+    log_utils.info("now to check split dex ... ")
+
+    smaliPath = decompileDir + "/smali"
+
+    multidexFilePath = file_utils.getFullPath(smaliPath + "/android/support/multidex/MultiDex.smali")
+    if not os.path.exists(multidexFilePath):
+        #android-support-multidex.jar不存在，从local下面拷贝，并编译
+        dexJar = file_utils.getFullPath('config/local/android-support-multidex.jar')
+        if not os.path.exists(dexJar):
+            log_utils.error("the method num expired of dex, but no android-support-multidex.jar in rh.apk or in local folder")
+            return
+
+        targetPath = file_utils.getFullPath(workDir + "/local")
+        if not os.path.exists(targetPath):
+            os.makedirs(targetPath)
+
+        file_utils.copy_file(dexJar, targetPath+"/android-support-multidex.jar")
+
+        jar2dex(targetPath, targetPath)
+        smaliPath = file_utils.getFullPath(decompileDir + "/smali")
+        ret = dex2smali(targetPath + '/classes.dex', smaliPath)
+
+
+
+    allFiles = []
+    allFiles = file_utils.list_files(decompileDir, allFiles, [])
+
+    maxFuncNum = 65535
+    currFucNum = 0
+    totalFucNum = 0
+
+    currDexIndex = 1
+
+    allRefs = []
+
+    #保证RHApplication等类在第一个classex.dex文件中
+    for f in allFiles:
+        f = f.replace("\\", "/")
+        if "/com/paojiao/rhsdk" in f or "/android/support/multidex" in f:
+            currFucNum = currFucNum + smali_utils.get_smali_method_count(f, allRefs)
+
+    totalFucNum = currFucNum
+    for f in allFiles:
+
+        f = f.replace("\\", "/")
+        if not f.endswith(".smali"):
+            continue
+
+        if "/com/paojiao/rhsdk" in f or "/android/support/multidex" in f:
+            continue
+
+        thisFucNum = smali_utils.get_smali_method_count(f, allRefs)
+        totalFucNum = totalFucNum + thisFucNum
+
+        if currFucNum + thisFucNum >= maxFuncNum:
+            currFucNum = thisFucNum
+            currDexIndex = currDexIndex + 1
+            newDexPath = os.path.join(decompileDir, "smali_classes"+str(currDexIndex))
+            os.makedirs(newDexPath)
+        else:
+            currFucNum = currFucNum + thisFucNum
+
+
+        if currDexIndex > 1:
+            targetPath = f[0:len(decompileDir)] + "/smali_classes"+str(currDexIndex) + f[len(smaliPath):]
+            file_utils.copy_file(f, targetPath)
+            file_utils.del_file_folder(f)
+
+
+    log_utils.info("the total func num: "+str(totalFucNum))
+    log_utils.info("split dex success. the classes.dex num: "+str(currDexIndex))
 
 
 def isset(v):

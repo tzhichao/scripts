@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import sys
 import os
 import os.path
@@ -380,7 +381,7 @@ def loadChannelUserConfig(appName, channel):
     return 1
 
 
-def writeDeveloperProperties(appID, appKey, channel, targetFilePath):
+def writeDeveloperProperties(appID, channel, targetFilePath):
     targetFilePath = file_utils.getFullPath(targetFilePath)
     proStr = ''
     if channel['params'] != None and len(channel['params']) > 0:
@@ -389,16 +390,16 @@ def writeDeveloperProperties(appID, appKey, channel, targetFilePath):
                 proStr = proStr + param['name'] + '=' + param['value'] + '\n'
 
     if 'sdkLogicVersionCode' in channel:
-        proStr = proStr + 'YINHU_SDK_VERSION_CODE=' + channel['sdkLogicVersionCode'] + '\n'
-    proStr = proStr + 'YINHU_Channel=' + channel['id'] + '\n'
-    proStr = proStr + 'YINHU_APPID=' + appID + '\n'
-    proStr = proStr + 'YINHU_APPKEY=' + appKey + '\n'
+        proStr = proStr + 'SDK_VERSION_CODE=' + channel['sdkLogicVersionCode'] + '\n'
+    proStr = proStr + 'ChannelGameId=' + channel['id'] + '\n'
+    proStr = proStr + 'GameId=' + appID + '\n'
+    #获取本地配置地址
     local_config = getLocalConfig()
-    if 'use_yinhu_auth' not in local_config or 'yinhu_auth_url' not in local_config:
-        log_utils.error("the use_yinhu_auth or yinhu_auth_url is not exists in local.properties. don't use yinhu auth.")
-        return
-    if local_config['use_yinhu_auth'] == '1':
-        proStr = proStr + 'YINHU_AUTH_URL=' + local_config['yinhu_auth_url'] + '\n'
+    if 'sdk_config' in local_config:
+        proStr = proStr + 'sdk_config=' + local_config['sdk_config'] + '\n'
+    if 'verify_token' in local_config:
+        proStr = proStr + 'verify_token=' + local_config['verify_token'] + '\n'
+
     plugins = channel.get('third-plugins')
     if plugins != None and len(plugins) > 0:
         for plugin in plugins:
@@ -407,7 +408,7 @@ def writeDeveloperProperties(appID, appKey, channel, targetFilePath):
                     if param['bWriteInClient'] == '1':
                         proStr = proStr + param['name'] + '=' + param['value'] + '\n'
 
-    log_utils.debug('the develop info is %s', proStr)
+    log_utils.debug('The develop info is %s :\n', proStr)
     targetFile = open(targetFilePath, 'wb')
     proStr = proStr.encode('UTF-8')
     targetFile.write(proStr)
