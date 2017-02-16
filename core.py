@@ -73,7 +73,7 @@ def pack(game, channel, sourcepath, isPublic):
     apk_utils.modifyGameName(channel, decompileDir)
     apk_utils.editActivityName(channel, decompileDir)
     #没看出来有什么作用
-    # apk_utils.editMainActivity(decompileDir)
+    apk_utils.editMainActivity(decompileDir)
     ret = apk_utils.doSDKScript(channel, decompileDir, newPackageName, sdkDestDir)
     if ret:
         return 1
