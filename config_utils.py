@@ -397,6 +397,8 @@ def writeDeveloperProperties(appID, channel, targetFilePath):
     local_config = getLocalConfig()
     if 'sdk_config' in local_config:
         proStr = proStr + 'sdk_config=' + local_config['sdk_config'] + '\n'
+    if 'current_channel' in local_config:
+        proStr = proStr + 'current_channel=' + local_config['current_channel'] + '\n'
 
     plugins = channel.get('third-plugins')
     if plugins != None and len(plugins) > 0:
