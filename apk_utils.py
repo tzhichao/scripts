@@ -364,7 +364,7 @@ def recompileApk(XMLPath, sourcefolder, apkfile, apktool = 'apktool2.jar'):
     ret = 1
     if os.path.exists(sourcefolder):
         try:
-            apktool = 'apktool.jar'
+            apktool = 'apktool2.jar'
             apktool = file_utils.getFullToolPath(apktool)
             cmd = '"%s" -jar -Xms512m -Xmx512m "%s" -q b -f "%s" -o "%s"' % (file_utils.getJavaCMD(),
              apktool,
