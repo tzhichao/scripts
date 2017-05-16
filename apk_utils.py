@@ -158,14 +158,7 @@ def editMainActivity(decompileDir):
                 activityNode.set(mLaunchModes, 'singleTop')
                 break
 
-        if bMain:
-            activityName = activityNode.attrib[key]
-            log_utils.info('editMainActivity : MainActivity is %s', activityName)
-            spName = 'prj.chameleon.channelapi.SplashScreenActivity'
-            if activityName == spName:
-                log_utils.info('editMainActivity >>> Delete MainActivity is %s', activityName)
-                applicationNode.remove(activityNode)
-            break
+
 
     appNode = root.find('application')
     activityNodes = appNode.findall('activity')
